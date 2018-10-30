@@ -4,7 +4,7 @@ cytoscape-no-overlap
 
 ## Description
 
-Cytoscape extension to help prevent overlap of nodes ([demo](https://ztruc.github.io/cytoscape-no-overlap))
+Cytoscape extension to help prevent overlap of nodes ([demo](https://mo0om.github.io/cytoscape-no-overlap))
 
 ## Dependencies
 
