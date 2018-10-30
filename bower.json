@@ -1,0 +1,24 @@
+{
+  "name": "cytoscape-no-overlap",
+  "description": "Cytoscape extension to help prevent overlap of nodes",
+  "main": "cytoscape-no-overlap.js",
+  "dependencies": {
+    "cytoscape": "^3.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ztruc/cytoscape-no-overlap.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "keywords": [
+    "cytoscape",
+    "cytoscape-extension"
+  ],
+  "license": "MIT"
+}
