@@ -1,6 +1,6 @@
 {
   "name": "cytoscape-no-overlap",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Cytoscape extension to help prevent overlap of nodes",
   "main": "cytoscape-no-overlap.js",
   "author": {
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ztruc/cytoscape-no-overlap.git"
+    "url": "https://github.com/mo0om/cytoscape-no-overlap.git"
   },
   "keywords": [
     "cytoscape",
@@ -31,9 +31,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ztruc/cytoscape-no-overlap/issues"
+    "url": "https://github.com/mo0om/cytoscape-no-overlap/issues"
   },
-  "homepage": "https://github.com/ztruc/cytoscape-no-overlap",
+  "homepage": "https://github.com/mo0om/cytoscape-no-overlap",
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
