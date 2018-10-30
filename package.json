@@ -1,6 +1,6 @@
 {
   "name": "cytoscape-no-overlap",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Cytoscape extension to help prevent overlap of nodes",
   "main": "cytoscape-no-overlap.js",
   "author": {
