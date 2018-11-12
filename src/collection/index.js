@@ -34,99 +34,99 @@ function findPosition (movingNode, fixedNode) {
     return finalPosition;
 }
 
-/**
- * Verifies each points of the bounding box (a) and looks if any of these points are inside the second bounding box (b)
- * @param {CytoscapeElement} a Node to compare
- * @param {CytoscapeElement} b Node to compare
- * @returns {boolean} Return true if node a overlaps node b
- */
-function compareNodes (a, b) {
-    let isOverlapping = false;
-    // bottom right
-    if (a.x1 < b.x2 &&
-        a.x1 > b.x1 &&
-        a.y1 < b.y2 &&
-        a.y1 > b.y1) {
-        isOverlapping = true;
-    }
-    // bottom left
-    if (a.x2 < b.x2 &&
-        a.x2 > b.x1 &&
-        a.y1 < b.y2 &&
-        a.y1 > b.y1) {
-        isOverlapping = true;
-    }
-    // top left
-    if (a.x2 < b.x2 &&
-        a.x2 > b.x1 &&
-        a.y2 > b.y1 &&
-        a.y2 < b.y2) {
-        isOverlapping = true;
-    }
-    // top right
-    if (a.x1 < b.x2 &&
-        a.x1 > b.x1 &&
-        a.y2 < b.y2 &&
-        a.y2 > b.y1) {
-        isOverlapping = true;
-    }
-    return isOverlapping;
-}
-
-/**
- * Recursively checks if a node or it's parent overlaps any of the shown nodes
- * @param {CytoscapeElement} node The node to verify
- * @param {number} padding A bigger padding will make the overlap happen before
- * @returns {boolean} True if the node overlaps any of the other nodes
- */
-function checkIfOverlaps (node, padding) {
-    let siblings
-    if (node.isChild()) {
-        siblings = node.parent().children().difference(node);
-    } else {
-        siblings = node.cy().nodes().orphans().difference(node);
-    }
-    let isOverlapping = false;
-    siblings.forEach(neighbor => {
-        const neighborBB = {
-            w: neighbor.renderedOuterWidth(),
-            h: neighbor.renderedOuterHeight(),
-            x1: neighbor.renderedPoint().x - neighbor.renderedOuterWidth() / 2 - padding,
-            x2: neighbor.renderedPoint().x + neighbor.renderedOuterWidth() / 2 + padding,
-            y1: neighbor.renderedPoint().y - neighbor.renderedOuterHeight() / 2 - padding,
-            y2: neighbor.renderedPoint().y + neighbor.renderedOuterHeight() / 2 + padding
-        }
-        const currentNodeBB = {
-            w: node.renderedOuterWidth(),
-            h: node.renderedOuterHeight(),
-            x1: node.renderedPoint().x - node.renderedOuterWidth() / 2 - padding,
-            x2: node.renderedPoint().x + node.renderedOuterWidth() / 2 + padding,
-            y1: node.renderedPoint().y - node.renderedOuterHeight() / 2 - padding,
-            y2: node.renderedPoint().y + node.renderedOuterHeight() / 2 + padding
-        }
-        if (compareNodes(currentNodeBB, neighborBB)) {
-            isOverlapping = true;
-        }
-        if (compareNodes(neighborBB, currentNodeBB)) {
-            isOverlapping = true;
-        }
-    });
-    if (node.parent().length > 0) {
-        if (checkIfOverlaps(node.parent(), padding)) {
-            isOverlapping = true;
-        }
-    }
-    return isOverlapping;
-}
-
 module.exports = function({padding = 0} = {}){
-    this.on('drag', evt => {
-        if (checkIfOverlaps(evt.target, padding)) {
-            evt.target.position(evt.target.scratch('previousPosition'));
-        } else {
-            evt.target.scratch('previousPosition',  JSON.parse(JSON.stringify(evt.target.position())));
+    let eles = this;
+    let cy = this.cy();
+
+    eles.on('drag', evt => {
+        // boundingBox() is not returnin the right width and height
+        const currentPosition = {
+            x1: evt.target.position().x - evt.target.width() / 2,
+            x2: evt.target.position().x + evt.target.width() / 2,
+            y1: evt.target.position().y - evt.target.height() / 2,
+            y2: evt.target.position().y + evt.target.height() / 2,
+            w: evt.target.width(),
+            h: evt.target.height()
+        };
+        let overlappingNode = null;
+
+        cy.nodes().forEach(aNode => {
+            if (aNode.id() === evt.target.id()) {
+                return;
+            }
+            const bb = JSON.parse(JSON.stringify(aNode.boundingbox()));
+            bb.x1 -= padding;
+            bb.x2 += padding;
+            bb.y1 -= padding;
+            bb.y2 += padding;
+            // bottom right
+            if (currentPosition.x1 < bb.x2 &&
+                currentPosition.x1 > bb.x1 &&
+                currentPosition.y1 < bb.y2 &&
+                currentPosition.y1 > bb.y1) {
+                overlappingNode = aNode;
+            }
+            // bottom left
+            if (currentPosition.x2 < bb.x2 &&
+                currentPosition.x2 > bb.x1 &&
+                currentPosition.y1 < bb.y2 &&
+                currentPosition.y1 > bb.y1) {
+                overlappingNode = aNode;
+            }
+            // top left
+            if (currentPosition.x2 < bb.x2 &&
+                currentPosition.x2 > bb.x1 &&
+                currentPosition.y2 > bb.y1 &&
+                currentPosition.y2 < bb.y2) {
+                overlappingNode = aNode;
+            }
+            // top right
+            if (currentPosition.x1 < bb.x2 &&
+                currentPosition.x1 > bb.x1 &&
+                currentPosition.y2 < bb.y2 &&
+                currentPosition.y2 > bb.y1) {
+                overlappingNode = aNode;
+            }
+        });
+        if (overlappingNode) {
+            const position = findPosition(evt.target, overlappingNode);
+            const overlappingBB =  JSON.parse(JSON.stringify(overlappingNode.boundingBox()));
+            overlappingBB.x1 -= padding;
+            overlappingBB.x2 += padding;
+            overlappingBB.y1 -= padding;
+            overlappingBB.y2 += padding;
+
+            let finalPos = {x: 0, y: 0}
+            switch (position) {
+                case 'top':
+                    finalPos = {
+                        x: currentPosition.x1 + currentPosition.w / 2,
+                        y: overlappingBB.y1 - currentPosition.h / 2
+                    }
+                    break;
+                case 'right':
+                    finalPos = {
+                        x: overlappingBB.x2 + currentPosition.w / 2,
+                        y: currentPosition.y1 + currentPosition.w / 2
+                    }
+                    break;
+                case 'bottom':
+                    finalPos = {
+                        x: currentPosition.x1 + currentPosition.w / 2,
+                        y: overlappingBB.y2 + currentPosition.h / 2
+                    }
+                    break;
+                case 'left':
+                    finalPos = {
+                        x: overlappingBB.x1 - currentPosition.w / 2,
+                        y: currentPosition.y1 + currentPosition.h / 2
+                    }
+                    break;
+            }
+            evt.target.position(finalPos);
+            return;
         }
     });
 
-    return this;
+    return this; // chainability
 };
