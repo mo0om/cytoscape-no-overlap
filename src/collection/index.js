@@ -1,40 +1,4 @@
 /**
- * Determines on which position to draw the node
- * (top, bottom, left, right)
- * @param {CytoscapeElement} node The node
- * @param {CytoscapeElement} node The node
- * @returns {string} Returns the position
- */
-function findPosition (movingNode, fixedNode) {
-    const moving = movingNode.boundingBox();
-    const fixed = fixedNode.boundingBox();
-
-    const movingMiddleOfNode = {
-        x: moving.x1 + moving.w / 2,
-        y: moving.y1 + moving.h / 2
-    }
-    const fixedMiddleOfNode = {
-        x: fixed.x1 + fixed.w / 2,
-        y: fixed.y1 + fixed.h / 2
-    }
-    let finalPosition = '';
-    if (movingMiddleOfNode.y > fixedMiddleOfNode.y &&
-        Math.abs((movingMiddleOfNode.y - fixedMiddleOfNode.y)) > Math.abs((movingMiddleOfNode.x - fixedMiddleOfNode.x))) {
-        finalPosition = 'bottom';
-    } else if (movingMiddleOfNode.y < fixedMiddleOfNode.y &&
-        Math.abs((movingMiddleOfNode.y - fixedMiddleOfNode.y)) > Math.abs((movingMiddleOfNode.x - fixedMiddleOfNode.x))) {
-        finalPosition = 'top';
-    } else if (movingMiddleOfNode.x > fixedMiddleOfNode.x &&
-        Math.abs((movingMiddleOfNode.x - fixedMiddleOfNode.x)) > Math.abs((movingMiddleOfNode.y - fixedMiddleOfNode.y))) {
-        finalPosition += 'right';
-    } else if (movingMiddleOfNode.x < fixedMiddleOfNode.x &&
-        Math.abs((movingMiddleOfNode.x - fixedMiddleOfNode.x)) > Math.abs((movingMiddleOfNode.y - fixedMiddleOfNode.y))) {
-        finalPosition += 'left';
-    }
-    return finalPosition;
-}
-
-/**
  * Verifies each points of the bounding box (a) and looks if any of these points are inside the second bounding box (b)
  * @param {CytoscapeElement} a Node to compare
  * @param {CytoscapeElement} b Node to compare
@@ -80,7 +44,7 @@ function compareNodes (a, b) {
  * @returns {boolean} True if the node overlaps any of the other nodes
  */
 function checkIfOverlaps (node, padding) {
-    let siblings
+    let siblings;
     if (node.isChild()) {
         siblings = node.parent().children().difference(node);
     } else {
@@ -95,7 +59,7 @@ function checkIfOverlaps (node, padding) {
             x2: neighbor.renderedPoint().x + neighbor.renderedOuterWidth() / 2 + padding,
             y1: neighbor.renderedPoint().y - neighbor.renderedOuterHeight() / 2 - padding,
             y2: neighbor.renderedPoint().y + neighbor.renderedOuterHeight() / 2 + padding
-        }
+        };
         const currentNodeBB = {
             w: node.renderedOuterWidth(),
             h: node.renderedOuterHeight(),
@@ -103,7 +67,7 @@ function checkIfOverlaps (node, padding) {
             x2: node.renderedPoint().x + node.renderedOuterWidth() / 2 + padding,
             y1: node.renderedPoint().y - node.renderedOuterHeight() / 2 - padding,
             y2: node.renderedPoint().y + node.renderedOuterHeight() / 2 + padding
-        }
+        };
         if (compareNodes(currentNodeBB, neighborBB)) {
             isOverlapping = true;
         }
