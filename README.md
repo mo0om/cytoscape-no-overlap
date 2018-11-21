@@ -51,7 +51,10 @@ Plain HTML/JS has the extension registered for you automatically, because no `re
 
 ## API
 
-TODO describe the API of the extension here.
+The extension takes an object with one property called padding which is the amount of pixels between the nodes 
+(default = 0). 
+
+example: `cy.nodes().noOverlap({ padding: 5 });`
 
 
 ## Build targets
