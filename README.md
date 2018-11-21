@@ -4,12 +4,11 @@ cytoscape-no-overlap
 
 ## Description
 
-Cytoscape extension to help prevent overlap of nodes ([demo](https://mo0om.github.io/cytoscape-no-overlap))
+Cytoscape extension to help prevent overlap of nodes on dragging ([demo](https://mo0om.github.io/cytoscape-no-overlap))
 
 ## Dependencies
 
  * Cytoscape.js ^3.2.0
- * <List your dependencies here please>
 
 
 ## Usage instructions
